@@ -120,21 +120,35 @@ Use `vscode/memory` to persist and recall knowledge across sessions. Memory has 
    - If no meeting is found: continue without meeting context — do not ask the user or block.
 7. Use WorkIQ for other M365 sources (emails, documents, Teams conversations) only if the user explicitly refers to them.
 
-### Phase 2 — Clarification
+### Phase 2 — Clarification (İş Birimi Soruları)
 
-Ask the user targeted clarifying questions. Group them logically. Typical areas to probe:
+This phase focuses **exclusively on business and stakeholder questions**. Do NOT ask technical or codebase questions yet.
 
-- **Scope**: Which user personas are affected (B2C web, mobile, B2E, channel managers, external partners)?
-- **Behavior**: What is the expected happy-path flow? What are the edge cases?
-- **Data**: Are new fields, tables, or indexes needed? Which databases are affected?
-- **Integration**: Does this touch external providers, channel managers, or other verticals?
-- **Non-functional**: Are there latency, throughput, or caching requirements? Any SLA impact?
-- **Backwards compatibility**: Does this change any existing API contracts or event schemas?
-- **Feature flags**: Should this be behind a feature flag for gradual rollout?
-- **Metrics / Observability**: How will success be measured? Any new logging or monitoring needed?
-- **Organizational Context**: If the automatic Teams meeting lookup (Phase 1) found a meeting, present a summary of key decisions and action items from that meeting and ask the user to confirm or correct them. If no meeting was found, skip this. For other M365 sources (emails, documents), ask only if the user explicitly wants analysis based on them.
+Present questions under the heading **"İş Birimi Soruları"**. Typical areas to probe:
 
-Do NOT skip this phase. Wait for user answers before proceeding. If the story is already very detailed with clear acceptance criteria, you may reduce questions but still confirm your understanding.
+- **Kapsam (Scope)**: Which user personas are affected (B2C web, mobile, B2E, channel managers, external partners)?
+- **Davranış (Behavior)**: What is the expected happy-path flow? What are the edge cases?
+- **İş Kuralları (Business Rules)**: Are there pricing, eligibility, or regional rules that govern this feature?
+- **Entegrasyon (Integration)**: Does this touch external providers, channel managers, or other verticals from a business perspective?
+- **Feature Flag / Rollout**: Should this be behind a feature flag for gradual rollout? What are the rollout stages?
+- **Metrikler (Metrics)**: How will success be measured? What KPIs or business metrics matter?
+- **Organizasyonel Bağlam**: If the automatic Teams meeting lookup (Phase 1) found a meeting, present a summary of key decisions and action items from that meeting and ask the user to confirm or correct them. If no meeting was found, skip this. For other M365 sources (emails, documents), ask only if the user explicitly wants analysis based on them.
+
+**Wait for the user's answers.** If answers raise new business/stakeholder questions, ask follow-ups — still under "İş Birimi Soruları". Do NOT proceed to technical questions until you are satisfied that the business scope, rules, and expectations are fully clear.
+
+Do NOT skip this phase. If the story is already very detailed with clear acceptance criteria, you may reduce questions but still confirm your understanding.
+
+### Phase 2b — Clarification (Teknik Sorular)
+
+Once business questions are resolved, present a second round of questions under the heading **"Teknik Sorular"**. These are codebase, architecture, and infrastructure-oriented:
+
+- **Veri (Data)**: Are new fields, tables, or indexes needed? Which databases are affected?
+- **API Kontratları (API Contracts)**: Does this change any existing API contracts or event schemas? Any breaking changes?
+- **Performans / SLA**: Are there latency, throughput, or caching requirements? Any SLA impact?
+- **Gözlemlenebilirlik (Observability)**: Any new logging, tracing, or monitoring needed?
+- **Geriye Uyumluluk (Backwards Compatibility)**: Are there consumers that depend on current behavior?
+
+**Wait for the user's answers.** If answers raise further technical questions, ask follow-ups — still under "Teknik Sorular". Only proceed to Phase 3 when both business and technical clarifications are complete.
 
 ### Phase 3 — Research
 
