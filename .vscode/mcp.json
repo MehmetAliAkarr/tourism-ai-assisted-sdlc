@@ -1,0 +1,33 @@
+{
+  "servers": {
+    "oraios/serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide",
+        "--project",
+        "${workspaceFolder}"
+      ]
+    },
+    "tourism-repos": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "C:\\projects\\turizm-repos\\Setur.Tourism.RepositoryMcp\\Setur.Tourism.RepositoryMcp\\Setur.Tourism.RepositoryMcp.csproj"
+      ]
+    },
+    "workiq": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@microsoft/workiq", "mcp"]
+    }
+  },
+  "inputs": []
+}
