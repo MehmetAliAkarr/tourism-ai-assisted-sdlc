@@ -1,7 +1,7 @@
 ---
 name: "Hotel Task Planner"
 description: "Decomposes Hotel PRD functional requirements into atomic implementation tasks for development agents. Use when: planning tasks, breaking down PRD, creating implementation plan, task decomposition, sprint planning, generating work items from a PRD document."
-tools: [read, edit, search, agent, todo, "oraios/serena/*", "tourism-repos/*"]
+tools: [read, edit, search, agent, todo, vscode/memory, "oraios/serena/*", "tourism-repos/*", "tokenTracker_startPipeline", "tokenTracker_reportPhase", "tokenTracker_endPipeline"]
 argument-hint: "{JiraId}"
 ---
 
@@ -60,6 +60,62 @@ These files are in the workspace root. Read them in full — they are your sourc
 - **Scope searches with `relative_path`** to limit results to the current repo (e.g., `relative_path="tourism-beyond-b2e/"`).
 - **Use tourism-repos MCP** (`list_projects` + `get_project_path`) to discover and locate repositories in the workspace.
 
+## Memory Usage
+
+Use `vscode/memory` to persist and recall knowledge across sessions. Memory has three scopes:
+
+| Scope | Path | Lifetime | Use For |
+|-------|------|----------|---------|
+| **User** | `/memories/` | Permanent, cross-workspace | User preferences, recurring decomposition conventions |
+| **Session** | `/memories/session/` | Current conversation only | In-progress task lists, per-repo research results, decomposition decisions |
+| **Repo** | `/memories/repo/` | Workspace-scoped, persistent | Repo structure maps, layer conventions per project, proven task patterns, dependency baselines |
+
+### When to READ memory
+
+- **Start of every session (Phase 1)** — Check `/memories/repo/` for cached repo structure maps, known layer conventions, and task decomposition patterns from previous runs before reading architecture/standards docs.
+- **Before Phase 3 (Research)** — Check `/memories/repo/` for previously discovered file paths, symbol locations, and DI patterns per repo to skip redundant codebase exploration.
+- **Before task generation** — Check `/memories/session/` for any earlier decomposition work in this conversation.
+
+### When to WRITE memory
+
+- **After Phase 2 (Project Discovery)** — Save the repo → FR map and local availability status to `/memories/session/`.
+- **After Phase 3 (per-repo research)** — If the subagent discovered a useful repo structure map or convention not yet in `/memories/repo/`, save it there for future sessions.
+- **After Phase 5** — If a new cross-repo dependency pattern or task ordering insight was discovered, save it to `/memories/repo/`.
+- **User preferences** — If the user corrects task granularity, naming, or ordering preferences, save to `/memories/`.
+
+### Rules
+
+- Always **view** the memory directory before creating new files to avoid duplicates.
+- Keep entries **concise** — bullet points, not prose.
+- **Update or delete** outdated memories when you discover they are wrong.
+- Do not store sensitive data (credentials, tokens, PII) in memory.
+
+## Token Tracker Pipeline Phases
+
+Use Token Tracker tools to report decomposition lifecycle phases so the same Jira pipeline can be measured across agents.
+
+### Tool usage rules
+
+1. At session start:
+    - If there is no active pipeline for the Jira, call `tokenTracker_startPipeline` with `jiraId` and `agentName: Hotel Task Planner`.
+    - If pipeline is already active from PRD flow, continue with phase reporting.
+2. At every phase transition, call `tokenTracker_reportPhase` with:
+    - `agentName`: `Hotel Task Planner`
+    - `phaseName`: one of the phase names below
+3. After all task files and `{JiraId}/README.md` are generated, call `tokenTracker_endPipeline` with the same Jira ID.
+
+### Phase names to report
+
+- `TP-Phase-1-Context-Loading`
+- `TP-Phase-2-Project-Discovery`
+- `TP-Phase-3-Per-Repository-Loop`
+- `TP-Phase-3a-Codebase-Research`
+- `TP-Phase-3b-Task-Decomposition`
+- `TP-Phase-3c-Task-File-Generation`
+- `TP-Phase-4-Coverage-Audit`
+- `TP-Phase-5-Readme-Cross-Repo-Plan`
+- `TP-Complete-Pipeline-End`
+
 ## Input
 
 You receive a **Jira ID** (e.g., `CT-4211`). This maps to a PRD file at:
@@ -74,12 +130,16 @@ If the PRD file does not exist, inform the user and stop.
 
 ### Phase 1 — Context Loading
 
+Token Tracker phase: `TP-Phase-1-Context-Loading`
+
 1. Read `hotel-team-architecture.md` and `hotel-team-standards.md` in full.
 2. Read `{JiraId}/PRD-{JiraId}.md` in full.
 3. Extract all **Functional Requirements** (FR-1, FR-2, ...) and the **Affected Services** table from the PRD.
 4. Use the todo tool to create a progress tracker for each phase.
 
 ### Phase 2 — Project Discovery
+
+Token Tracker phase: `TP-Phase-2-Project-Discovery`
 
 1. From the PRD's "Affected Services" table, identify every repository that needs changes.
 2. **Verify each repository is available locally** using tourism-repos MCP: call `list_projects` to see all available projects, then call `get_project_path` for each affected repo to resolve its local path. If a repo is NOT listed, note it as unavailable and flag it to the user.
@@ -89,9 +149,13 @@ If the PRD file does not exist, inform the user and stop.
 
 ### Phase 3 — Per-Repository Loop (Research → Decompose → Generate)
 
+Token Tracker phase: `TP-Phase-3-Per-Repository-Loop`
+
 **Iterate over every repository in the Phase 2 map.** For each repository, execute steps 3a → 3b → 3c before moving to the next repository. Do NOT move to Phase 4 until every repository has been processed.
 
 #### 3a — Codebase Research (via Subagent)
+
+Token Tracker phase: `TP-Phase-3a-Codebase-Research`
 
 Delegate research for this repository to a subagent. **Instruct the subagent to use Serena MCP tools as the primary research method** (see Codebase Research Tools section above). The subagent must:
 
@@ -106,6 +170,8 @@ Delegate research for this repository to a subagent. **Instruct the subagent to 
 **If the repo is not available locally** (marked `isLocal: false` in Phase 2 map), flag it to the user and request that it be added to the workspace before proceeding.
 
 #### 3b — Task Decomposition
+
+Token Tracker phase: `TP-Phase-3b-Task-Decomposition`
 
 Decompose the FRs assigned to this repository into atomic tasks. A task is **atomic** when:
 
@@ -126,11 +192,15 @@ Decompose the FRs assigned to this repository into atomic tasks. A task is **ato
 
 #### 3c — Task File Generation
 
+Token Tracker phase: `TP-Phase-3c-Task-File-Generation`
+
 Write the task files for this repository into `{JiraId}/{repo-name}/TASK-{NNN}-{short-name}.md`.
 
 **After writing, mark this repository's todo item as completed before moving to the next repository.**
 
 ### Phase 4 — Coverage Audit
+
+Token Tracker phase: `TP-Phase-4-Coverage-Audit`
 
 **STOP and verify before proceeding.** This is a mandatory gate.
 
@@ -141,6 +211,10 @@ Write the task files for this repository into `{JiraId}/{repo-name}/TASK-{NNN}-{
 5. Only when all repositories and all FRs are covered, proceed to Phase 5.
 
 ### Phase 5 — README & Cross-Repo Plan
+
+Token Tracker phase: `TP-Phase-5-Readme-Cross-Repo-Plan`
+
+After final artifacts are generated and before returning the summary, report `TP-Complete-Pipeline-End`, then call `tokenTracker_endPipeline`.
 
 Generate the `{JiraId}/README.md` with the full cross-repository dependency graph, execution order, and FR→task mapping.
 

@@ -53,3 +53,11 @@ See [model-policy.md](../model-policy.md) for the complete auto-model selection 
 - Fallback chains and cross-tier protection
 - Complexity escalation rules
 - Delegation handoff conventions
+
+## Agent Tooling Baseline
+
+When creating or updating `.agent.md` files in this repository:
+
+- Include `vscode/memory` in the frontmatter `tools` list by default.
+- Only omit `vscode/memory` if there is a specific security or scope constraint.
+- Keep existing tool naming conventions (`read`, `edit`, `search`, `agent`, `todo`, MCP namespaces, etc.) and add `vscode/memory` without removing required tools.
