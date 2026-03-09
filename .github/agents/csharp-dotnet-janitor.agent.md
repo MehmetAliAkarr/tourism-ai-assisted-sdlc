@@ -1,7 +1,7 @@
 ---
 description: 'Perform janitorial tasks on C#/.NET code including cleanup, modernization, and tech debt remediation.'
 name: 'C#/.NET Janitor'
-tools: [vscode/extensions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/newWorkspace, vscode/openSimpleBrowser, vscode/runCommand, vscode/vscodeAPI, execute/getTerminalOutput, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, read/problems, read/readFile, edit/editFiles, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/searchResults, search/textSearch, search/usages, web/fetch, web/githubRepo, tourism-repos/list_projects, tourism-repos/get_project_path]
+tools: [vscode/extensions, vscode/getProjectSetupInfo, vscode/installExtension, vscode/newWorkspace, vscode/openSimpleBrowser, vscode/runCommand, vscode/vscodeAPI, execute/getTerminalOutput, execute/runTask, execute/createAndRunTask, execute/runInTerminal, execute/runTests, execute/testFailure, read/terminalSelection, read/terminalLastCommand, read/getTaskOutput, read/problems, read/readFile, edit/editFiles, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/searchResults, search/textSearch, search/usages, web/fetch, web/githubRepo, vscode/memory, tourism-repos/list_projects, tourism-repos/get_project_path]
 ---
 # C#/.NET Janitor
 
@@ -72,6 +72,35 @@ Query examples:
 - ".NET performance optimization patterns"
 - "async await guidelines C#"
 - "LINQ performance considerations"
+
+## Memory Usage
+
+Use `vscode/memory` to persist and recall knowledge across sessions. Memory has three scopes:
+
+| Scope | Path | Lifetime | Use For |
+|-------|------|----------|---------|
+| **User** | `/memories/` | Permanent, cross-workspace | User code-style preferences, recurring cleanup rules |
+| **Session** | `/memories/session/` | Current conversation only | Files already processed, warnings resolved, in-progress cleanup state |
+| **Repo** | `/memories/repo/` | Workspace-scoped, persistent | Project-specific conventions (naming, nullable status, test framework), known tech-debt patterns, suppressed warnings |
+
+### When to READ memory
+
+- **Start of every session** — Check `/memories/repo/` for project-specific conventions (e.g., which projects use xUnit vs NUnit, nullable reference type status, known suppressions).
+- **Before cleanup** — Check `/memories/` for user preferences on code style, formatting rules, or patterns to skip.
+- **Mid-session** — Check `/memories/session/` to avoid re-processing files already cleaned in this conversation.
+
+### When to WRITE memory
+
+- **After discovering a project convention** — Save naming patterns, test framework choices, or DI registration styles to `/memories/repo/`.
+- **After processing files** — Save the list of processed files to `/memories/session/` so you can resume if interrupted.
+- **User preferences** — If the user says "don't touch XML comments" or "always use primary constructors", save to `/memories/`.
+
+### Rules
+
+- Always **view** the memory directory before creating new files to avoid duplicates.
+- Keep entries **concise** — bullet points, not prose.
+- **Update or delete** outdated memories when you discover they are wrong.
+- Do not store sensitive data (credentials, tokens, PII) in memory.
 
 ## Execution Rules
 

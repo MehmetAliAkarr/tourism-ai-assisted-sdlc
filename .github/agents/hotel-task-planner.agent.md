@@ -1,7 +1,7 @@
 ---
 name: "Hotel Task Planner"
 description: "Decomposes Hotel PRD functional requirements into atomic implementation tasks for development agents. Use when: planning tasks, breaking down PRD, creating implementation plan, task decomposition, sprint planning, generating work items from a PRD document."
-tools: [read, edit, search, agent, todo, "oraios/serena/*", "tourism-repos/*"]
+tools: [read, edit, search, agent, todo, vscode/memory, "oraios/serena/*", "tourism-repos/*"]
 argument-hint: "{JiraId}"
 ---
 
@@ -59,6 +59,36 @@ These files are in the workspace root. Read them in full — they are your sourc
 - **Use `find_referencing_symbols`** for impact analysis before creating tasks — understand who calls the code you're modifying.
 - **Scope searches with `relative_path`** to limit results to the current repo (e.g., `relative_path="tourism-beyond-b2e/"`).
 - **Use tourism-repos MCP** (`list_projects` + `get_project_path`) to discover and locate repositories in the workspace.
+
+## Memory Usage
+
+Use `vscode/memory` to persist and recall knowledge across sessions. Memory has three scopes:
+
+| Scope | Path | Lifetime | Use For |
+|-------|------|----------|---------|
+| **User** | `/memories/` | Permanent, cross-workspace | User preferences, recurring decomposition conventions |
+| **Session** | `/memories/session/` | Current conversation only | In-progress task lists, per-repo research results, decomposition decisions |
+| **Repo** | `/memories/repo/` | Workspace-scoped, persistent | Repo structure maps, layer conventions per project, proven task patterns, dependency baselines |
+
+### When to READ memory
+
+- **Start of every session (Phase 1)** — Check `/memories/repo/` for cached repo structure maps, known layer conventions, and task decomposition patterns from previous runs before reading architecture/standards docs.
+- **Before Phase 3 (Research)** — Check `/memories/repo/` for previously discovered file paths, symbol locations, and DI patterns per repo to skip redundant codebase exploration.
+- **Before task generation** — Check `/memories/session/` for any earlier decomposition work in this conversation.
+
+### When to WRITE memory
+
+- **After Phase 2 (Project Discovery)** — Save the repo → FR map and local availability status to `/memories/session/`.
+- **After Phase 3 (per-repo research)** — If the subagent discovered a useful repo structure map or convention not yet in `/memories/repo/`, save it there for future sessions.
+- **After Phase 5** — If a new cross-repo dependency pattern or task ordering insight was discovered, save it to `/memories/repo/`.
+- **User preferences** — If the user corrects task granularity, naming, or ordering preferences, save to `/memories/`.
+
+### Rules
+
+- Always **view** the memory directory before creating new files to avoid duplicates.
+- Keep entries **concise** — bullet points, not prose.
+- **Update or delete** outdated memories when you discover they are wrong.
+- Do not store sensitive data (credentials, tokens, PII) in memory.
 
 ## Input
 
