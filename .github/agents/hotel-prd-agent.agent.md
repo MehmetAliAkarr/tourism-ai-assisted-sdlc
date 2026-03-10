@@ -151,14 +151,20 @@ Token Tracker phase: `PRD-Phase-2-Business-Clarification`
 
 This phase focuses **exclusively on business and stakeholder questions**. Do NOT ask technical or codebase questions yet.
 
+**IMPORTANT: All questions in this phase must be non-technical.** The audience for these questions is the product owner, business analyst, or stakeholder — not the developer. Do NOT mention databases, APIs, feature flags, caching, events, schemas, endpoints, services, repositories, or any implementation detail. Questions must be understandable by someone with zero software engineering knowledge.
+
 Present questions under the heading **"İş Birimi Soruları"**. Typical areas to probe:
 
-- **Kapsam (Scope)**: Which user personas are affected (B2C web, mobile, B2E, channel managers, external partners)?
-- **Davranış (Behavior)**: What is the expected happy-path flow? What are the edge cases?
-- **İş Kuralları (Business Rules)**: Are there pricing, eligibility, or regional rules that govern this feature?
-- **Entegrasyon (Integration)**: Does this touch external providers, channel managers, or other verticals from a business perspective?
-- **Feature Flag / Rollout**: Should this be behind a feature flag for gradual rollout? What are the rollout stages?
-- **Metrikler (Metrics)**: How will success be measured? What KPIs or business metrics matter?
+- **Scope**: Which user groups are affected by this change? (e.g., end customers, call center, hotel partners, internal operations team)
+- **Business Goal**: What business problem does this feature solve? What is the expected business value?
+- **User Scenario**: How will the user use this feature? What should the step-by-step user experience look like?
+- **Business Rules**: Are there pricing, eligibility, regional, or regulatory rules that govern this feature?
+- **Acceptance Criteria**: From the business unit's perspective, what conditions must be met for this feature to be considered "done"?
+- **Priority & Timeline**: What is the priority level of this feature? Is it tied to a specific date or campaign period?
+- **Affected Business Processes**: Will this require changes to existing workflows? Which departments or teams will be impacted?
+- **External Stakeholders**: Does this change affect business relationships with hotel partners, channel managers, or external suppliers?
+- **Rollout**: Should this feature be released to all users at once, or should it start with a specific customer segment or region?
+- **Success Metrics**: How will the success of this feature be measured? Which business metrics matter? (e.g., conversion rate, customer satisfaction, transaction volume)
 - **Organizasyonel Bağlam**: If the automatic Teams meeting lookup (Phase 1) found a meeting, present a summary of key decisions and action items from that meeting and ask the user to confirm or correct them. If no meeting was found, skip this. For other M365 sources (emails, documents), ask only if the user explicitly wants analysis based on them.
 
 **Wait for the user's answers.** If answers raise new business/stakeholder questions, ask follow-ups — still under "İş Birimi Soruları". Do NOT proceed to technical questions until you are satisfied that the business scope, rules, and expectations are fully clear.
